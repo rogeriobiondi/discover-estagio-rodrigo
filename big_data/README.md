@@ -16,9 +16,11 @@
   ```
 Mais comandos disponíveis no [Guide da Apache](https://hadoop.apache.org/docs/r2.7.1/hadoop-project-dist/hadoop-common/CommandsManual.html)
 
+___
+
 1.2. __O Apache Hive__:
 
-É um framework primeiramente desenvolvido pelo grupo do Facebook para análise de grandes quantidades de dados, executado no ambiente Hadoop, visando aproveitar a o conhecimento de SQL dos desenvolvedores, transformando Querys convencionais  em Jobs MapReduce executadas no cluster do Hadoop. Possibilita a portabilidade de aplicações baseadas em SQL para o Hadoop. Designado para OLAP (Online Analytical Processing), cria uma camada entre o arquivo disponível no HDFS e a Interface do Usuário, através do uso de um Meta Store.
+É um framework primeiramente desenvolvido pelo grupo do Facebook para análise de grandes quantidades de dados, executado no ambiente Hadoop, visando aproveitar a o conhecimento de SQL dos desenvolvedores, transformando Querys convencionais  em Jobs MapReduce executadas no cluster do Hadoop. Possibilita a portabilidade de aplicações baseadas em SQL para o Hadoop. Designado para _OLAP (Online Analytical Processing)_, cria uma camada entre o arquivo disponível no HDFS e a Interface do Usuário, através do uso de um Meta Store.
 Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve para traduzir o SQL em tarefas MapReduce sobre um arquivo, compactado ou não, a fim de minimizar o tempo de desenvolvimento, visto que você pode obter os mesmos resultados de uma query através de um algoritmo em Java.  
 
   - *Tabelas*:  
@@ -47,10 +49,10 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
   ```
 
   - *Compactações*:  
-	Há dois tipos de compressão para os formatos de arquivos do Hive, o *Snappy* e o *GZip*, sendo a primeira mais rápida e co menor taxa de compressão, e a segunda com maior taxa de compressão, mas torna-se mais lenta ao recuperar dados com uma query.
+	Há dois tipos de compressão para os formatos de arquivos do Hive, o *Snappy* e o *~~GZip~~ Zlib*, sendo a primeira mais rápida e co menor taxa de compressão, e a segunda com maior taxa de compressão, mas torna-se mais lenta ao recuperar dados com uma query.
 	Os formatos suportados pelo Hive são __Parquet, ORC (Optmized Row Columnar) e AVRO__, e o uso de cada um depende do caso a ser analisado .
 	Também existem os formatos textfile e JSON.
-  Presente nos exemplos abaixo e também na apresentação 'File Format Benchmarks.ppt'
+  Presente nos exemplos abaixo e também na apresentação [File Format Benchmarks.ppt](../big_data/Arquivos/File Format Benchmarks.pptx)
 
   - *Particionamento*:  
 	A partição é um campo da tabela, usualmente os últimos campos da tabela, que servirá para a separação da tabela e fragmentação dos arquivos. A criação de partições no Hive gera um diretório em que há a separação do arquivo com os dados. Exemplo: se há uma coluna na tabela chamada “setor”, onde há os setores de uma empresa e você faz consultas constantes a ela, a criação de uma partição pode otimizar a busca dos dados; definindo uma partição onde “setor = RH”, ele gerará um diretório “setor=RH” e terá um arquivo separado com as linhas onde o setor é igual ao definido.
@@ -87,8 +89,41 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
 
   insert into table partdados_csv partition (coduf) select * from temp_dados_municipios_csv;
   ```
+  ___
+  1.3. __Apache Sqoop__
+
+  Trata-se de uma ferramenta para a transferência de dados de alguma base de dados relacional para o HDFS ou diretamente para o Hive __E__ vice-versa. Permite o uso de drivers definidos pelo usuário para criar instâncias do BD e também manipular os Jobs MapReduce. Para ter um bom aproveitamento computacional do Sqoop, atente-se de dividir razoavelmente o trabalho de acordo com a disponibilidade de HardWare que você possui, pois isso está diretamente ligado ao tempo que você levará para transferir o conteúdo. O caso executado, com o cluster da Discover e uma tabela com 54 milhões de linhas será explicado em outro arquivo, bem como os resultados.
+  Para acessar, [clique aqui](./sqoop.md).  
+
+  Resumidamente, uma forma prática que você pode usar para visualizar um DB, visualizar tabelas e importar uma tabela (ou todas) é:
+
+  ```bash
+  sqoop list-databases --connect jdbc:oracle:thin:<USER>@<host_ip:porta:instancia> --username <user> -P
+  #Mostra as DBs presentes no Oracle CASO você tenha a permissão. Senão dará erro: ERROR manager.OracleManager: The catalog view DBA_USERS was not found. This may happen if the user does not have DBA privileges. Please check privileges and try again.
+
+  sqoop list-tables --connect jdbc:oracle:thin:<USER>@<host_ip:porta:instancia> --username <USER> -P
+
+  sqoop import --connect jdbc:oracle:thin:<USER>@<host_ip:porta:instancia> --username <USER> -P --table <'DB'.'TABLE'> --m 8 --split-by 'NOME_COLUNA' --where 'CONDICAO' --target-dir <diretorio_HDFS>
+  ```
+  A opção `-P` serve para obrigar o usuário a digitar a senha do DB no console, evitando que ela seja passada via texto ou fique salva no console. `--table` faz com que você escolha uma tabela e não será usada no caso do `--import-all-tables`, que importará todas as tabelas. `--target-dir` seleciona um local para inserir os arquivos, dentro do HDFS. `--m` seleciona o número de mappers que irão atuar em paralelo na transferência dos dados (O default é 4). `--split-by <NOME_COLUNA>` uma coluna que servirá de base para o MapReduce, sendo proporcional ao número de mappers. O comando `--where <condição>` fará parte do SQL que será usado para que o Sqoop selecione os dados da tabela. Possível de ver [neste log](./Arquivos/log_exemplo1.txt).
+
+  [Relação completa de comandos e sintaxe do Sqoop 1.4.1.](https://sqoop.apache.org/docs/1.4.1-incubating/SqoopUserGuide.html#_syntax_11)
+
+  ### Evite erros de forma simples
+
+  * No Sqoop:
+    * Caso seu usuário não seja _camel case_, digite tudo em maiúsculo;
+    * O mesmo serve para DATABASES e TABLES ou VIEWS;
+    * Verifique se você os privilégios necessários para executar as operações;
+
+  * Em geral:
+    * Utilize, ao final de um comando em _CLI_ (linha de comando) sempre o desvio de saída `2>&1|tee <arq.log>`. Ele salva o que o programa exibe na tela em um arquivo "<arq.log>". O que pode ser util em situações de erro (o _statement_ padrão é `2> <arq.log>`) e em situações em que tudo ocorre normal ( `1> <arq.log>`). Neste caso o `|tee ` faz com que o CLI também exiba a saída do programa.
+  ___
+
 TO DO:  
-- [x] Hive e SQLs usados;
-- [x] Completar o import de dados da tabela para o HFDS
-- [ ] Relatório de testes do Sqoop;
-- [ ] 
+- [x] ~~Hive e SQLs usados~~;
+- [x] ~~Completar o import de dados da tabela para o HFDS;~~
+- [x] ~~Relatório de testes do Sqoop;~~
+- [ ] Criar a tabela dos dados exportados para o Hive;
+- [ ] Exportar os dados do IBGE para o Oracle DB;
+- [ ] ...
