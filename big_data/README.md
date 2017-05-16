@@ -49,10 +49,15 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
   ```
 
   - *Compactações*:  
-	Há dois tipos de compressão para os formatos de arquivos do Hive, o *Snappy* e o *~~GZip~~ Zlib*, sendo a primeira mais rápida e co menor taxa de compressão, e a segunda com maior taxa de compressão, mas torna-se mais lenta ao recuperar dados com uma query.
+	Há dois tipos de compressão para os formatos de arquivos do Hive, o *Snappy*, *GZip* e *LZO*, sendo a primeira mais rápida e co menor taxa de compressão, e a segunda com maior taxa de compressão, mas torna-se mais lenta ao recuperar dados com uma query.
 	Os formatos suportados pelo Hive são __Parquet, ORC (Optmized Row Columnar) e AVRO__, e o uso de cada um depende do caso a ser analisado .
-	Também existem os formatos textfile e JSON.
-  Presente nos exemplos abaixo e também na apresentação [File Format Benchmarks.ppt](../big_data/Arquivos/File Format Benchmarks.pptx)
+	Também existem os formatos textfile, sequentialFile e JSON.
+  Presente nos exemplos abaixo e também na apresentação [File Format Benchmarks.ppt](../big_data/Arquivos/File Format Benchmarks.pptx).
+  Vale lembrar que os arquivos "split" não suporta compressão, __a não ser a compressão LZO__.
+  >O formato ORC não suporta arquivos "split", então não é possível o `STORE AS ORC` quando você tiver feito um import com a tag `--split-by` através do Sqoop.
+
+  [Link interessante sobre File Formats e compressão.](https://acadgild.com/blog/apache-hive-file-formats/)
+
 
   - *Particionamento*:  
 	A partição é um campo da tabela, usualmente os últimos campos da tabela, que servirá para a separação da tabela e fragmentação dos arquivos. A criação de partições no Hive gera um diretório em que há a separação do arquivo com os dados. Exemplo: se há uma coluna na tabela chamada “setor”, onde há os setores de uma empresa e você faz consultas constantes a ela, a criação de uma partição pode otimizar a busca dos dados; definindo uma partição onde “setor = RH”, ele gerará um diretório “setor=RH” e terá um arquivo separado com as linhas onde o setor é igual ao definido.
@@ -105,9 +110,9 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
 
   sqoop import --connect jdbc:oracle:thin:<USER>@<host_ip:porta:instancia> --username <USER> -P --table <'DB'.'TABLE'> --m 8 --split-by 'NOME_COLUNA' --where 'CONDICAO' --target-dir <diretorio_HDFS>
   ```
-  A opção `-P` serve para obrigar o usuário a digitar a senha do DB no console, evitando que ela seja passada via texto ou fique salva no console. `--table` faz com que você escolha uma tabela e não será usada no caso do `--import-all-tables`, que importará todas as tabelas. `--target-dir` seleciona um local para inserir os arquivos, dentro do HDFS. `--m` seleciona o número de mappers que irão atuar em paralelo na transferência dos dados (O default é 4). `--split-by <NOME_COLUNA>` uma coluna que servirá de base para o MapReduce, sendo proporcional ao número de mappers. O comando `--where <condição>` fará parte do SQL que será usado para que o Sqoop selecione os dados da tabela. Possível de ver [neste log](./Arquivos/log_exemplo1.txt).
+  A opção `-P` serve para obrigar o usuário a digitar a senha do DB no console, evitando que ela seja passada via texto ou fique salva no console. `--table` faz com que você escolha uma tabela e não será usada no caso do `--import-all-tables`, que importará todas as tabelas. `--target-dir` seleciona um local para inserir os arquivos, dentro do HDFS. `--m` seleciona o número de mappers que irão atuar em paralelo na transferência dos dados (O default é 4). `--split-by <NOME_COLUNA>` uma coluna que servirá de base para o MapReduce, sendo proporcional ao número de mappers. O comando `--where <condição>` fará parte do SQL que será usado para que o Sqoop selecione os dados da tabela. Possível de ver [neste log](./Arquivos/sqoop/log_exemplo1.txt).
 
-  [Relação completa de comandos e sintaxe do Sqoop 1.4.1.](https://sqoop.apache.org/docs/1.4.1-incubating/SqoopUserGuide.html#_syntax_11)
+  [Relação completa de comandos e sintaxe do Sqoop 1.4.6.](https://sqoop.apache.org/docs/1.4.6/SqoopUserGuide.html)
 
   ### Evite erros de forma simples
 
@@ -119,11 +124,3 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
   * Em geral:
     * Utilize, ao final de um comando em _CLI_ (linha de comando) sempre o desvio de saída `2>&1|tee <arq.log>`. Ele salva o que o programa exibe na tela em um arquivo "<arq.log>". O que pode ser util em situações de erro (o _statement_ padrão é `2> <arq.log>`) e em situações em que tudo ocorre normal ( `1> <arq.log>`). Neste caso o `|tee ` faz com que o CLI também exiba a saída do programa.
   ___
-
-TO DO:  
-- [x] ~~Hive e SQLs usados~~;
-- [x] ~~Completar o import de dados da tabela para o HFDS;~~
-- [x] ~~Relatório de testes do Sqoop;~~
-- [ ] Criar a tabela dos dados exportados para o Hive;
-- [ ] Exportar os dados do IBGE para o Oracle DB;
-- [ ] ...
