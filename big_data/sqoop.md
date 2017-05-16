@@ -52,7 +52,7 @@ a opção `noscan` mostra os dados _inacurados_, tendo como dado relevante o tam
 ![Tabela importada:](./Arquivos/sqoop/sqoop_table.png)
 Esta demora ocorre pois a query está dividida em 200 jobs MapReduce. No entanto, após ao fim da query sem a opção `noscan`, é possível verificar que o número de linhas é o mesmo da tabela original:
 ![Tabela importada:](./Arquivos/sqoop/sqoop_table2.png)  
-[Query](./Arquivo/Sqoop/queries_sitpass.sql)
+[Query](./Arquivos/Sqoop/queries_sitpass.sql)
 
 Dado que as queries vão demorar muito para rodar, vou usar ma tabela menor para tornar o desenvolvimento mais ágil.
 ```sql
