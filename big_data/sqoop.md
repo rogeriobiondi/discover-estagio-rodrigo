@@ -1,4 +1,4 @@
-# Importação de Dados para o Sqoop:
+# Importação de Dados para o HDFS atrvés do Sqoop:
 
 Tentativa de um import direto, salvando no HDFS diretamente num arquivo de texto através do comando abaixo:  
 ```bash
@@ -82,5 +82,22 @@ E não obtive sucesso devido a um erro:
 >Error: java.io.IOException: SQLException in nextKeyValue   
  Caused by: java.sql.SQLDataException: ORA-01843: not a valid month
 
-Até agora não consegui dar solução ao erro.
-Pergunta está no [StackOverFlow](https://pt.stackoverflow.com/questions/205152/erro-ora-01843-ao-importar-tabela-no-sqoop).
+
+
+__~~Até agora não consegui dar solução ao erro.~~__  
+
+Então desviei do erro através:
+  Selecionei a _View_ _VW_SIM_DETALHE_INFORMACAO_ para criar uma outra _View_ para o mês de novembro, mudando o _date type_ do campo DT_OPERACAO para _NUMBER_:  
+
+  `to_number(to_char('02/04/16', 'dd/mm/yy'))`
+
+
+
+Pergunta está no [StackOverFlow em Português](https://pt.stackoverflow.com/questions/205152/erro-ora-01843-ao-importar-tabela-no-sqoop) e no [StackOverFlow](http://stackoverflow.com/questions/44029327/error-ora-01843-when-importing-table-to-sqoop).
+
+__Solução nos links acima /\__
+
+O erro foi gerado por questão de como a _View_ foi criada, usando uma _string literal_ para encontrar a data, o que muito provavelmente não foi possível de dar _parse_ através do _Squoop_.  
+O formato correto é fazer a query com `to_date('01/12/16', 'dd/mm/yy')`. __ISSO EVITARÁ O ERRO ORA-01843__
+
+>Dependendo da tarefa, a query pode ser concluída mas não retornar nenhum resultado (0 bytes, 0 rows) porque __o YARN fechou o container__. Você pode verificar no HUE ou através do Log com a opção `--verbose`.

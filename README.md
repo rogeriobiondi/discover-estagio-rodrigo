@@ -7,7 +7,7 @@ TO DO:
 - [x] ~~Relatório de testes do Sqoop;~~
 - [x] ~~Criar a tabela dos dados exportados para o Hive;~~
 - [ ] Exportar os dados do IBGE para o Oracle DB;
-- [ ]
+- [ ]   
 
 Treinamentos:
 
