@@ -1,5 +1,7 @@
 # Importação de Dados para o HDFS atrvés do Sqoop:
 
+1.1. [Import Incremental](#import-incr)
+
 Tentativa de um import direto, salvando no HDFS diretamente num arquivo de texto através do comando abaixo:  
 ```bash
 sqoop import --connect jdbc:oracle:thin:<dados_de_acesso> --username <user>  -P --table SIM_DETALHE_INFORMACAO --m 1 --target-dir -- /user/rodrigo/<dir_> --verbose >> log.txt
@@ -101,3 +103,14 @@ O erro foi gerado por questão de como a _View_ foi criada, usando uma _string l
 O formato correto é fazer a query com `to_date('01/12/16', 'dd/mm/yy')`. __ISSO EVITARÁ O ERRO ORA-01843__
 
 >Dependendo da tarefa, a query pode ser concluída mas não retornar nenhum resultado (0 bytes, 0 rows) porque __o YARN fechou o container__. Você pode verificar no HUE ou através do Log com a opção `--verbose`.
+
+### <a name="import-incr"></a>Import Incremental:
+
+Estou me baseando [nesta referencia, da HortonWorks.](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.4.0/bk_dataintegration/content/incrementally-updating-hive-table-with-sqoop-and-ext-table.html)
+
+É uma prática de 4 passos:  
+_Ingest -> Reconcile -> Compact -> Purge_  
+
+É a prática de selecionar os dados que sofreram mudança, criar uma _View_ com a tabela base e a mudança de dados, criar uma tabela com os dados únicos e depois repor a tabela base com a nova, deletando a anterior.
+
+![Boa prática Incremental](./Arquivos/sqoop/incremental1.PNG)
