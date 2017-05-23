@@ -94,6 +94,8 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
 
   insert into table partdados_csv partition (coduf) select * from temp_dados_municipios_csv;
   ```
+
+  >Vale lembrar que não é possível criar uma tabela no formato `CREATE TABLE AS SELECT` não pode ter como alvo uma tabela __particionada__ ou __externa__. Esse comando copia tanto a estrutura da tabela quanto os dados. O comando `CREATE TABLE LIKE` copia apenas a estrutura da tabela.
   ___
   1.3. __Apache Sqoop__
 
@@ -113,6 +115,25 @@ Apesar de aceitar SQL, não se trata de um banco de dados efetivamente. Serve pa
   A opção `-P` serve para obrigar o usuário a digitar a senha do DB no console, evitando que ela seja passada via texto ou fique salva no console. `--table` faz com que você escolha uma tabela e não será usada no caso do `--import-all-tables`, que importará todas as tabelas. `--target-dir` seleciona um local para inserir os arquivos, dentro do HDFS. `--m` seleciona o número de mappers que irão atuar em paralelo na transferência dos dados (O default é 4). `--split-by <NOME_COLUNA>` uma coluna que servirá de base para o MapReduce, sendo proporcional ao número de mappers. O comando `--where <condição>` fará parte do SQL que será usado para que o Sqoop selecione os dados da tabela. Possível de ver [neste log](./Arquivos/sqoop/log_exemplo1.txt).
 
   [Relação completa de comandos e sintaxe do Sqoop 1.4.6.](https://sqoop.apache.org/docs/1.4.6/SqoopUserGuide.html)
+
+#####  POR QUESTAO DE SEGURANÇA: SALVE PASSWORDS DE DBs NO HDFS COM A DEVIDA PERMISSÃO
+
+Primeiro abra o terminal e digite `echo -n "A SENHA AQUI" > sqoop.password`, depois mande o arquivo para o diretório com as permissões corretas:
+
+```bash
+hadoop fs -put ./sqoop.password /user/rodrigo/pasta_segura
+hadoop fs -chmod 400 /user/rodrigo/pasta_segura
+```
+No Sqoop você deve inserir a opção:
+```bash
+--password-file ./user/rodrigo/pasta_segura/sqoop.password
+```
+
+
+[Aqui](https://community.hortonworks.com/questions/13781/sqoop-import-with-secure-password.html) há uma explicação de como ciar um password encriptado e usá-lo com o sqoop.
+
+
+----
 
   ### Evite erros de forma simples
 
