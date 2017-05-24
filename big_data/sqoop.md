@@ -2,6 +2,8 @@
 
 1.1. [Import Incremental](#import-incr)
 
+>O _'export'_ de dados foi mais simples e está [aqui](./Arquivos/sqoop/export.md)
+
 Tentativa de um import direto, salvando no HDFS diretamente num arquivo de texto através do comando abaixo:  
 ```bash
 sqoop import --connect jdbc:oracle:thin:<dados_de_acesso> --username <user>  -P --table SIM_DETALHE_INFORMACAO --m 1 --target-dir -- /user/rodrigo/<dir_> --verbose >> log.txt
@@ -78,7 +80,7 @@ Output:
 
 Criei uma view no Oracle e, selecionando apenas o dia 4 e tentei importar para o HDFS via Sqoop com:
 ```bash
-sqoop import --connect jdbc:oracle:thin:SITPASS/sitpass@10.100.0.150:1521:somos --username SITPASS --password sitpass --table SITPASS.VW_DIA4 --split-by NUM_LINHA  --m 10 --target-dir  /user/rodrigo/RESUMO_SITPASS 2>&1|tee import_tab_menor.txt
+sqoop import --connect jdbc:oracle:thin:@10.100.0.150:1521:somos --username SITPASS --password sitpass-password-file '/user/rodrigo/sqoop.password' --table SITPASS.VW_DIA4 --split-by NUM_LINHA  --m 10 --target-dir  /user/rodrigo/RESUMO_SITPASS 2>&1|tee import_tab_menor.txt
 ```
 E não obtive sucesso devido a um erro:
 >Error: java.io.IOException: SQLException in nextKeyValue   
@@ -97,7 +99,7 @@ Então desviei do erro através:
 
 Pergunta está no [StackOverFlow em Português](https://pt.stackoverflow.com/questions/205152/erro-ora-01843-ao-importar-tabela-no-sqoop) e no [StackOverFlow](http://stackoverflow.com/questions/44029327/error-ora-01843-when-importing-table-to-sqoop).
 
-__Solução nos links acima /\__
+__Solução nos links acima /\\__
 
 O erro foi gerado por questão de como a _View_ foi criada, usando uma _string literal_ para encontrar a data, o que muito provavelmente não foi possível de dar _parse_ através do _Squoop_.  
 O formato correto é fazer a query com `to_date('01/12/16', 'dd/mm/yy')`. __ISSO EVITARÁ O ERRO ORA-01843__
