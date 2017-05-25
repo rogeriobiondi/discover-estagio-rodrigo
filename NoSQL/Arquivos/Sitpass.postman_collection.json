@@ -1,0 +1,31 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Sitpass",
+		"_postman_id": "9a8da41a-e4ad-17d3-2e96-93c5501dbb4a",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Busca a quantidade de passagens PASSE LIVRE  e PASSE ESCOLAR",
+			"request": {
+				"url": "http://hdp11.discover.com.br:9200/sitpass/_search",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\n\t\"query\":{\n\t\t\n\t\t\"bool\": {\n\t\t\t\n\t\t\t\"must\":{\n\t\t\t\t\"match\":{\"tp_produto\":\"PASSE\"}\n\t\t\t},\n\t\t\t\"must_not\":{\n\t\t\t\t\"match\":{\"tp_produto\":\"COMUM\"}\n\t\t\t},\n\t\t\t\"should\":[\n\t\t\t\t{\"match\":{\"tp_produto\":\"LIVRE\"}},\n\t\t\t\t{\"match\":{\"tp_produto\":\"ESCOLAR\"}}\n\t\t\t]\n\t\t\t\n\t\t}\n\t\t\n\t}\n\t\n}"
+				},
+				"description": "Efetua a busca de com os termos:\n\n-PASSE[\n-ESCOLAR,\n-LIVRE\n]"
+			},
+			"response": []
+		}
+	]
+}
