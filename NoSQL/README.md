@@ -105,10 +105,14 @@ Para fazer a seleção, no caso SITPASS, das passagens que são subsidiadas (Pas
 }
 ```
 
-Isso me permite gerar a seguinte Visualização no Kibana:
+Isso acima gera o mesmo resultado que o filtro disponível no Kibana:  
+
+```
+(tp_produto:'PASSE'  AND tp_produto:'LIVRE') OR (tp_produto:'PASSE' AND tp_produto:'ESCOLAR')
+```
 
 ![Gráfico com filtro similar no Kibana](./Arquivos/kibana_g1.PNG)
 
 Que está disponível no aqui:
 
-<iframe src="http://hdp10.discover.com.br:5601/app/kibana#/dashboard/SitPass?embed=true&_g=(filters%3A!())" height="600" width="800"></iframe>
+[DASHBOARD SITPASS](http://hdp10.discover.com.br:5601/app/kibana#/dashboard/SitPass?_g=(filters%3A!()))
