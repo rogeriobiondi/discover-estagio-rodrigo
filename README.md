@@ -1,7 +1,7 @@
-# discover-estagio-rodrigo
+# Atividades do Estágio:
 
 
-TO DO:  
+### TO DO GERAL:  
 - [x] ~~Hive e SQLs usados~~;
 - [x] ~~Completar o import de dados da tabela para o HFDS;~~
 - [x] ~~Relatório de testes do Sqoop;~~
@@ -10,10 +10,20 @@ TO DO:
 - [x] ~~Arquivar dados de credencial para o Sqoop;~~
 - [x] ~~Mais conteúdo sobre _import incremental_;~~
 - [x] ~~Importar dados para o ElasticSearch;~~
-- [ ] Básico sobre ElasticSearch;
-- [ ] Criar DashBoard no Kibana;
+- [x] ~~Básico sobre ElasticSearch;~~
+- [x] ~~Criar DashBoard no Kibana;~~
 
-Treinamentos:
+### Treinamentos:
+
+#### Python
+
+[Arquivos _'.py'_ estão aqui!](./python/)
+
+- Básico:
+* - [x] ~~Leitura de material base;~~
+* - [x] ~~Upload dos códigos de treino;~~
+------
+#### AWS
 
 - [ ]	Acreditação do profissional técnico da AWS  (técnico)  
 

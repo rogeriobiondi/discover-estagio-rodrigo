@@ -116,3 +116,10 @@ Isso acima gera o mesmo resultado que o filtro disponível no Kibana:
 Que está disponível no aqui:
 
 [DASHBOARD SITPASS](http://hdp10.discover.com.br:5601/app/kibana#/dashboard/SitPass?_g=(filters%3A!()))
+
+### Analyzers:
+
+Servem para fazer uma melhor filtragem da busca, através de _Tokenizers_, que tiram palavras irrelevantes, tais como "the" e "of", busca _"Fuzzy"_, que permite incluir na busca algo que tenha um valor próximo, tal como "ElasticSeark" pode aparecer na busca de "ElasticSearch", o _"fuzzyness"_ é configurável.
+Também tem a filtragem de elementos, através de _"filters"_, que definem o que deve ou não aparecer, também selecionam _lowercase_ ou _UPPERCASE_. Mais abaixo tem conteúdos interessantes sobre a Análise Textual do ElasticSearch.
+
+[Parte 1](https://www.elastic.co/blog/found-text-analysis-part-1) => [Parte 2](https://www.elastic.co/blog/found-text-analysis-part-2)
