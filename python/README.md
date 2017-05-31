@@ -11,4 +11,4 @@ Aborda o básico de Python:
 - Módulos;
 
 30-05-17:
-- [ ] Fazer exercícios com todos os tópicos acima; 
+- [x] ~~Fazer exercícios com todos os tópicos acima;~~

@@ -1,7 +1,21 @@
 # Atividades do Estágio:
 
+### Conteúdos:
 
+1. Big Data:  
+  1.1. Hadoop  
+  1.2. Hive  
+  1.3. Sqoop  
+  1.4. Spark
+
+2. NoSQL:  
+  2.1. ElasticSearch  
+  ~~2.2.~~ 
+
+
+----
 ### TO DO GERAL:  
+- [ ] Básico de Spark.
 - [x] ~~Hive e SQLs usados~~;
 - [x] ~~Completar o import de dados da tabela para o HFDS;~~
 - [x] ~~Relatório de testes do Sqoop;~~
