@@ -11,8 +11,7 @@ dados.take(10) # Traz as primeiras 10 linhas
 linhas = dados.map(lambda linha: linha.split(";")) # Quebra a linha do CSV em um array
 objetos_linhas = linhas.map(lambda s: Row(cod=int(s[0]), cod_regiao=int(s[1]), nome=str(s[2].encode('utf-8').strip()), uf=str(s[3].encode('utf-8').strip()), pop=int(s[4]), cidade=str(s[5].encode('utf-8').strip()), populacao=float(s[6])))
 
-
-## Exemplo de filtro
+# Exemplo de filtro
 def filtrar(a):
   return (a["cidade"] == "ALTA FLORESTA D'OESTE")
 
